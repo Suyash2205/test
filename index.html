@@ -1,165 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Math Lock Breaker</title>
 
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
-    font-family: Segoe UI, sans-serif;
-    background: linear-gradient(135deg,#667eea,#764ba2);
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background: linear-gradient(135deg,#1d2671,#c33764);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* MAIN CARD */
 .game-container {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    width: 900px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    background: #ffffff;
+    width: 920px;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.35);
 }
 
+/* HEADER */
 .game-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
     border-bottom: 2px solid #eee;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    margin-bottom: 22px;
 }
 
-.game-title { font-size: 32px; color: #667eea; }
+.game-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #4f46e5;
+}
 
-.stats { display: flex; gap: 30px; }
-.stat-value { font-size: 24px; font-weight: bold; }
+.stats {
+    display: flex;
+    gap: 35px;
+}
 
-.timer { color: #e74c3c; }
+.stat {
+    text-align: center;
+}
 
+.stat span {
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.timer {
+    color: #ef4444;
+}
+
+/* LOCK GRID */
 .locks-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+    margin-bottom: 26px;
 }
 
 .lock {
     aspect-ratio: 1;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    border-radius: 15px;
+    background: linear-gradient(135deg,#6366f1,#8b5cf6);
+    border-radius: 16px;
+    color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border: 3px solid #333;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.lock:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.3);
 }
 
 .lock.broken {
-    background: #95a5a6;
-    opacity: 0.6;
+    background: #9ca3af;
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
-.lock-icon { font-size: 45px; }
-.lock-number { color: white; font-weight: bold; }
+.lock-icon {
+    font-size: 40px;
+}
 
+.lock-number {
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+/* QUESTION CARD */
 .question-container {
-    background: #f4f6f8;
-    border-radius: 15px;
-    padding: 30px;
+    background: #f9fafb;
+    border-radius: 18px;
+    padding: 28px;
     text-align: center;
 }
 
 .question-text {
-    font-size: 36px;
-    font-weight: bold;
+    font-size: 34px;
+    font-weight: 800;
     margin-bottom: 20px;
 }
 
 .answer-input {
-    font-size: 30px;
+    font-size: 28px;
     width: 200px;
     padding: 10px;
-    border-radius: 10px;
-    border: 3px solid #667eea;
+    border-radius: 12px;
+    border: 3px solid #6366f1;
     text-align: center;
 }
 
 .submit-btn {
-    padding: 12px 35px;
+    margin-top: 16px;
+    padding: 12px 38px;
     font-size: 18px;
-    background: linear-gradient(135deg,#667eea,#764ba2);
+    background: linear-gradient(135deg,#6366f1,#8b5cf6);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
 }
 
 .feedback {
+    margin-top: 14px;
     font-size: 22px;
-    margin-top: 15px;
-    min-height: 30px;
+    min-height: 28px;
 }
 
-.correct { color: #27ae60; }
-.incorrect { color: #e74c3c; }
+.correct { color: #16a34a; }
+.incorrect { color: #dc2626; }
 
-.hidden { display: none; }
+.hidden {
+    display: none;
+}
 
+/* GAME OVER */
 .game-over {
     text-align: center;
-    padding: 40px;
+    padding: 50px;
 }
 
-.game-over h2 { font-size: 48px; }
+.game-over h2 {
+    font-size: 48px;
+    font-weight: 800;
+}
+
 .restart-btn {
-    margin-top: 25px;
+    margin-top: 26px;
     font-size: 22px;
-    padding: 15px 45px;
-    background: linear-gradient(135deg,#667eea,#764ba2);
+    padding: 14px 44px;
+    background: linear-gradient(135deg,#6366f1,#8b5cf6);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 14px;
     cursor: pointer;
 }
 </style>
 </head>
 
 <body>
+
 <div class="game-container">
 
-<div class="game-header">
-    <h1 class="game-title">🔓 Math Lock Breaker</h1>
-    <div class="stats">
-        <div>Score<br><span id="score" class="stat-value">0</span></div>
-        <div>Time<br><span id="timer" class="stat-value timer">50</span></div>
+    <div class="game-header">
+        <h1 class="game-title">🔓 Math Lock Breaker</h1>
+        <div class="stats">
+            <div class="stat">Score<br><span id="score">0</span></div>
+            <div class="stat">Time<br><span id="timer" class="timer">50</span></div>
+        </div>
     </div>
-</div>
 
-<div id="game-area">
-    <div class="locks-container" id="locks"></div>
+    <div id="game-area">
+        <div class="locks-container" id="locks"></div>
 
-    <div class="question-container">
-        <div class="question-text" id="question">Select a lock</div>
-        <input type="number" id="answer" class="answer-input" disabled>
-        <br><br>
-        <button class="submit-btn" id="submit" disabled>Submit</button>
-        <div class="feedback" id="feedback"></div>
+        <div class="question-container">
+            <div class="question-text" id="question">Select a lock</div>
+            <input type="number" id="answer" class="answer-input" disabled />
+            <br/>
+            <button class="submit-btn" id="submit" disabled>Submit</button>
+            <div class="feedback" id="feedback"></div>
+        </div>
     </div>
-</div>
 
-<div id="game-over" class="game-over hidden">
-    <h2 id="end-title"></h2>
-    <div style="font-size:28px;margin-top:15px;">
-        Final Score: <span id="final-score"></span>
+    <div id="game-over" class="game-over hidden">
+        <h2 id="end-title"></h2>
+        <div style="font-size:28px;margin-top:15px;">
+            Final Score: <span id="final-score"></span>
+        </div>
+        <button class="restart-btn" onclick="location.reload()">Play Again</button>
     </div>
-    <button class="restart-btn" onclick="location.reload()">Play Again</button>
-</div>
 
 </div>
 
@@ -170,97 +219,128 @@ class Game {
         this.selected = null;
         this.score = 0;
         this.time = 50;
-        this.timer = null;
+        this.timerInterval = null;
+
         this.createLocks();
-        this.render();
+        this.renderLocks();
         this.startTimer();
-        this.events();
+        this.attachEvents();
     }
 
     createLocks() {
         const ops = ['+','-','*','/'];
-        for (let i=1;i<=6;i++) {
-            let op = ops[Math.floor(Math.random()*ops.length)];
-            let a,b,ans;
-            if(op==='+'){a=10+Math.random()*80|0;b=10+Math.random()*80|0;ans=a+b;}
-            if(op==='-'){a=40+Math.random()*80|0;b=1+Math.random()*30|0;ans=a-b;}
-            if(op==='*'){a=2+Math.random()*15|0;b=2+Math.random()*10|0;ans=a*b;}
-            if(op==='/'){ans=2+Math.random()*10|0;b=2+Math.random()*10|0;a=ans*b;}
-            this.locks.push({id:i,q:`${a} ${op} ${b}`,a:ans,done:false});
+
+        for (let i = 1; i <= 6; i++) {
+            let op = ops[Math.floor(Math.random() * ops.length)];
+            let a, b, ans;
+
+            if (op === '+') {
+                a = 10 + Math.random() * 80 | 0;
+                b = 10 + Math.random() * 80 | 0;
+                ans = a + b;
+            }
+            if (op === '-') {
+                a = 40 + Math.random() * 80 | 0;
+                b = 1 + Math.random() * 30 | 0;
+                ans = a - b;
+            }
+            if (op === '*') {
+                a = 2 + Math.random() * 15 | 0;
+                b = 2 + Math.random() * 10 | 0;
+                ans = a * b;
+            }
+            if (op === '/') {
+                ans = 2 + Math.random() * 10 | 0;
+                b = 2 + Math.random() * 10 | 0;
+                a = ans * b;
+            }
+
+            this.locks.push({ id: i, q: `${a} ${op} ${b}`, a: ans, done: false });
         }
     }
 
-    render() {
-        const box=document.getElementById('locks');
-        box.innerHTML='';
-        this.locks.forEach(l=>{
-            const d=document.createElement('div');
-            d.className='lock'+(l.done?' broken':'');
-            d.innerHTML=`<div class="lock-icon">${l.done?'🔓':'🔒'}</div>
-                         <div class="lock-number">Lock ${l.id}</div>`;
-            if(!l.done) d.onclick=()=>this.select(l);
-            box.appendChild(d);
+    renderLocks() {
+        const container = document.getElementById('locks');
+        container.innerHTML = '';
+
+        this.locks.forEach(lock => {
+            const div = document.createElement('div');
+            div.className = 'lock' + (lock.done ? ' broken' : '');
+            div.innerHTML = `
+                <div class="lock-icon">${lock.done ? '🔓' : '🔒'}</div>
+                <div class="lock-number">Lock ${lock.id}</div>
+            `;
+            if (!lock.done) div.onclick = () => this.selectLock(lock);
+            container.appendChild(div);
         });
     }
 
-    select(lock){
-        this.selected=lock;
-        document.getElementById('question').textContent=lock.q;
-        document.getElementById('answer').disabled=false;
-        document.getElementById('submit').disabled=false;
-        document.getElementById('answer').value='';
+    selectLock(lock) {
+        this.selected = lock;
+        document.getElementById('question').textContent = lock.q;
+        document.getElementById('answer').disabled = false;
+        document.getElementById('submit').disabled = false;
+        document.getElementById('answer').value = '';
         document.getElementById('answer').focus();
     }
 
-    check(){
-        if(!this.selected) return;
-        const v=parseInt(answer.value);
-        const f=document.getElementById('feedback');
-        if(v===this.selected.a){
-            this.selected.done=true;
-            this.score+=10;
-            f.textContent='✓ Correct!';
-            f.className='feedback correct';
-            this.render();
-            if(this.locks.every(l=>l.done)){
-                this.finish("All Locks Broken!");
+    checkAnswer() {
+        if (!this.selected) return;
+
+        const value = parseInt(document.getElementById('answer').value);
+        const feedback = document.getElementById('feedback');
+
+        if (value === this.selected.a) {
+            this.selected.done = true;
+            this.score += 10;
+            feedback.textContent = '✓ Correct!';
+            feedback.className = 'feedback correct';
+            this.renderLocks();
+
+            if (this.locks.every(l => l.done)) {
+                this.finishGame('All Locks Broken!');
             }
         } else {
-            this.score=Math.max(0,this.score-2);
-            f.textContent='✗ Wrong! -2 points';
-            f.className='feedback incorrect';
+            this.score = Math.max(0, this.score - 2);
+            feedback.textContent = '✗ Wrong! -2 points';
+            feedback.className = 'feedback incorrect';
         }
-        score.textContent=this.score;
-        answer.value='';
+
+        document.getElementById('score').textContent = this.score;
+        document.getElementById('answer').value = '';
     }
 
-    startTimer(){
-        this.timer=setInterval(()=>{
+    startTimer() {
+        this.timerInterval = setInterval(() => {
             this.time--;
-            timer.textContent=this.time;
-            if(this.time<=0){
-                this.finish("Time's Up!");
+            document.getElementById('timer').textContent = this.time;
+
+            if (this.time <= 0) {
+                this.finishGame("Time's Up!");
             }
-        },1000);
+        }, 1000);
     }
 
-    finish(msg){
-        clearInterval(this.timer);
+    finishGame(message) {
+        clearInterval(this.timerInterval);
+
         document.getElementById('game-area').classList.add('hidden');
         document.getElementById('game-over').classList.remove('hidden');
-        document.getElementById('end-title').textContent=msg;
-        document.getElementById('final-score').textContent=this.score;
+
+        document.getElementById('end-title').textContent = message;
+        document.getElementById('final-score').textContent = this.score;
     }
 
-    events(){
-        submit.onclick=()=>this.check();
-        answer.addEventListener('keydown',e=>{
-            if(e.key==='Enter') this.check();
+    attachEvents() {
+        document.getElementById('submit').onclick = () => this.checkAnswer();
+        document.getElementById('answer').addEventListener('keydown', e => {
+            if (e.key === 'Enter') this.checkAnswer();
         });
     }
 }
 
-window.onload=()=>new Game();
+window.onload = () => new Game();
 </script>
+
 </body>
 </html>
