@@ -6,11 +6,7 @@
 <title>Math Lock Breaker</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     font-family: "Inter", "Segoe UI", sans-serif;
@@ -60,9 +56,7 @@ body {
     font-weight: 800;
 }
 
-.timer {
-    color: #ef4444;
-}
+.timer { color: #ef4444; }
 
 /* LOCK GRID */
 .locks-container {
@@ -82,7 +76,7 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: 0.2s ease;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
@@ -98,14 +92,8 @@ body {
     transform: none;
 }
 
-.lock-icon {
-    font-size: 40px;
-}
-
-.lock-number {
-    font-weight: 700;
-    margin-top: 6px;
-}
+.lock-icon { font-size: 40px; }
+.lock-number { font-weight: 700; margin-top: 6px; }
 
 /* QUESTION CARD */
 .question-container {
@@ -150,10 +138,6 @@ body {
 .correct { color: #16a34a; }
 .incorrect { color: #dc2626; }
 
-.hidden {
-    display: none;
-}
-
 /* GAME OVER */
 .game-over {
     text-align: center;
@@ -180,166 +164,128 @@ body {
 
 <body>
 
-<div class="game-container">
+<div id="root"></div>
 
-    <div class="game-header">
-        <h1 class="game-title">🔓 Math Lock Breaker</h1>
-        <div class="stats">
-            <div class="stat">Score<br><span id="score">0</span></div>
-            <div class="stat">Time<br><span id="timer" class="timer">50</span></div>
-        </div>
-    </div>
+<!-- React CDN -->
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    <div id="game-area">
-        <div class="locks-container" id="locks"></div>
+<script type="text/babel">
+function MathLockBreaker() {
+  const [score, setScore] = React.useState(0);
+  const [time, setTime] = React.useState(50);
+  const [locks, setLocks] = React.useState([]);
+  const [selected, setSelected] = React.useState(null);
+  const [answer, setAnswer] = React.useState('');
+  const [gameOver, setGameOver] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [feedback, setFeedback] = React.useState('');
 
-        <div class="question-container">
-            <div class="question-text" id="question">Select a lock</div>
-            <input type="number" id="answer" class="answer-input" disabled />
-            <br/>
-            <button class="submit-btn" id="submit" disabled>Submit</button>
-            <div class="feedback" id="feedback"></div>
-        </div>
-    </div>
-
-    <div id="game-over" class="game-over hidden">
-        <h2 id="end-title"></h2>
-        <div style="font-size:28px;margin-top:15px;">
-            Final Score: <span id="final-score"></span>
-        </div>
-        <button class="restart-btn" onclick="location.reload()">Play Again</button>
-    </div>
-
-</div>
-
-<script>
-class Game {
-    constructor() {
-        this.locks = [];
-        this.selected = null;
-        this.score = 0;
-        this.time = 50;
-        this.timerInterval = null;
-
-        this.createLocks();
-        this.renderLocks();
-        this.startTimer();
-        this.attachEvents();
-    }
-
-    createLocks() {
-        const ops = ['+','-','*','/'];
-
-        for (let i = 1; i <= 6; i++) {
-            let op = ops[Math.floor(Math.random() * ops.length)];
-            let a, b, ans;
-
-            if (op === '+') {
-                a = 10 + Math.random() * 80 | 0;
-                b = 10 + Math.random() * 80 | 0;
-                ans = a + b;
-            }
-            if (op === '-') {
-                a = 40 + Math.random() * 80 | 0;
-                b = 1 + Math.random() * 30 | 0;
-                ans = a - b;
-            }
-            if (op === '*') {
-                a = 2 + Math.random() * 15 | 0;
-                b = 2 + Math.random() * 10 | 0;
-                ans = a * b;
-            }
-            if (op === '/') {
-                ans = 2 + Math.random() * 10 | 0;
-                b = 2 + Math.random() * 10 | 0;
-                a = ans * b;
-            }
-
-            this.locks.push({ id: i, q: `${a} ${op} ${b}`, a: ans, done: false });
+  React.useEffect(() => {
+    generateLocks();
+    const timer = setInterval(() => {
+      setTime(t => {
+        if (t <= 1) {
+          clearInterval(timer);
+          endGame("Time's Up!");
+          return 0;
         }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  function generateLocks() {
+    const ops = ['+','-','*','/'];
+    const temp = [];
+    for (let i = 1; i <= 6; i++) {
+      let op = ops[Math.floor(Math.random()*4)];
+      let a,b,ans;
+      if(op==='+'){a=10+Math.random()*80|0;b=10+Math.random()*80|0;ans=a+b;}
+      if(op==='-'){a=40+Math.random()*80|0;b=1+Math.random()*30|0;ans=a-b;}
+      if(op==='*'){a=2+Math.random()*15|0;b=2+Math.random()*10|0;ans=a*b;}
+      if(op==='/'){ans=2+Math.random()*10|0;b=2+Math.random()*10|0;a=ans*b;}
+      temp.push({id:i,q:`${a} ${op} ${b}`,a:ans,done:false});
     }
+    setLocks(temp);
+  }
 
-    renderLocks() {
-        const container = document.getElementById('locks');
-        container.innerHTML = '';
-
-        this.locks.forEach(lock => {
-            const div = document.createElement('div');
-            div.className = 'lock' + (lock.done ? ' broken' : '');
-            div.innerHTML = `
-                <div class="lock-icon">${lock.done ? '🔓' : '🔒'}</div>
-                <div class="lock-number">Lock ${lock.id}</div>
-            `;
-            if (!lock.done) div.onclick = () => this.selectLock(lock);
-            container.appendChild(div);
-        });
+  function submit() {
+    if (!selected) return;
+    if (parseInt(answer) === selected.a) {
+      setFeedback('✓ Correct!');
+      setScore(s => s + 10);
+      selected.done = true;
+      setLocks([...locks]);
+      if (locks.every(l => l.done)) endGame("All Locks Broken!");
+    } else {
+      setFeedback('✗ Wrong! -2 points');
+      setScore(s => Math.max(0, s - 2));
     }
+    setAnswer('');
+  }
 
-    selectLock(lock) {
-        this.selected = lock;
-        document.getElementById('question').textContent = lock.q;
-        document.getElementById('answer').disabled = false;
-        document.getElementById('submit').disabled = false;
-        document.getElementById('answer').value = '';
-        document.getElementById('answer').focus();
-    }
+  function endGame(msg) {
+    setGameOver(true);
+    setMessage(msg);
+  }
 
-    checkAnswer() {
-        if (!this.selected) return;
+  if (gameOver) {
+    return (
+      <div className="game-container game-over">
+        <h2>{message}</h2>
+        <div style={{fontSize:28}}>Final Score: {score}</div>
+        <button className="restart-btn" onClick={() => location.reload()}>Play Again</button>
+      </div>
+    );
+  }
 
-        const value = parseInt(document.getElementById('answer').value);
-        const feedback = document.getElementById('feedback');
+  return (
+    <div className="game-container">
+      <div className="game-header">
+        <h1 className="game-title">🔓 Math Lock Breaker</h1>
+        <div className="stats">
+          <div className="stat">Score<br/><span>{score}</span></div>
+          <div className="stat">Time<br/><span className="timer">{time}</span></div>
+        </div>
+      </div>
 
-        if (value === this.selected.a) {
-            this.selected.done = true;
-            this.score += 10;
-            feedback.textContent = '✓ Correct!';
-            feedback.className = 'feedback correct';
-            this.renderLocks();
+      <div className="locks-container">
+        {locks.map(lock => (
+          <div
+            key={lock.id}
+            className={`lock ${lock.done ? 'broken' : ''}`}
+            onClick={() => !lock.done && setSelected(lock)}
+          >
+            <div className="lock-icon">{lock.done ? '🔓' : '🔒'}</div>
+            <div className="lock-number">Lock {lock.id}</div>
+          </div>
+        ))}
+      </div>
 
-            if (this.locks.every(l => l.done)) {
-                this.finishGame('All Locks Broken!');
-            }
-        } else {
-            this.score = Math.max(0, this.score - 2);
-            feedback.textContent = '✗ Wrong! -2 points';
-            feedback.className = 'feedback incorrect';
-        }
-
-        document.getElementById('score').textContent = this.score;
-        document.getElementById('answer').value = '';
-    }
-
-    startTimer() {
-        this.timerInterval = setInterval(() => {
-            this.time--;
-            document.getElementById('timer').textContent = this.time;
-
-            if (this.time <= 0) {
-                this.finishGame("Time's Up!");
-            }
-        }, 1000);
-    }
-
-    finishGame(message) {
-        clearInterval(this.timerInterval);
-
-        document.getElementById('game-area').classList.add('hidden');
-        document.getElementById('game-over').classList.remove('hidden');
-
-        document.getElementById('end-title').textContent = message;
-        document.getElementById('final-score').textContent = this.score;
-    }
-
-    attachEvents() {
-        document.getElementById('submit').onclick = () => this.checkAnswer();
-        document.getElementById('answer').addEventListener('keydown', e => {
-            if (e.key === 'Enter') this.checkAnswer();
-        });
-    }
+      <div className="question-container">
+        <div className="question-text">{selected ? selected.q : 'Select a lock'}</div>
+        <input
+          className="answer-input"
+          value={answer}
+          onChange={e => setAnswer(e.target.value)}
+          disabled={!selected}
+        />
+        <br/>
+        <button className="submit-btn" onClick={submit} disabled={!selected}>
+          Submit
+        </button>
+        <div className={`feedback ${feedback.includes('Correct') ? 'correct' : 'incorrect'}`}>
+          {feedback}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-window.onload = () => new Game();
+ReactDOM.createRoot(document.getElementById("root")).render(<MathLockBreaker />);
 </script>
 
 </body>
