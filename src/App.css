@@ -1,0 +1,95 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(180deg, #0f172a, #1e293b);
+}
+
+.game {
+  max-width: 420px;
+  margin: auto;
+  height: 100vh;
+  padding: 10px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #111827;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.rank {
+  font-weight: bold;
+  color: gold;
+}
+
+.progress {
+  flex: 1;
+  height: 6px;
+  background: #334155;
+  margin: 0 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #84cc16);
+}
+
+.timer {
+  background: #ef4444;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.coins {
+  margin-left: 8px;
+}
+
+.card {
+  margin-top: 20px;
+  background: #020617;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.level {
+  color: #38bdf8;
+  font-weight: bold;
+}
+
+.question {
+  font-size: 28px;
+  margin-top: 10px;
+}
+
+.options {
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+}
+
+.option-btn {
+  flex: 1;
+  padding: 18px;
+  font-size: 22px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.option-btn:active {
+  transform: scale(0.95);
+}
